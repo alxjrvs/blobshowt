@@ -34,10 +34,10 @@ module Api
       end
 
       def send_blast
-        RegisteredNumber.all.each do |num|
+        RegisteredNumber.all.each do |rn|
           twilio.messages.create(
             from: TWILIO,
-            to: num,
+            to: rn.number,
             body: body
           )
         end
