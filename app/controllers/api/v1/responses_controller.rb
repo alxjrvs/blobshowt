@@ -8,7 +8,7 @@ module Api
 
       def create
         puts params
-        return nil
+        render nothing: true
       end
 
       private
