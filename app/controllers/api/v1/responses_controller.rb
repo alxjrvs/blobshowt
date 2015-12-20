@@ -4,12 +4,10 @@ class ResponsesController < ApplicationController
   ME="+17814757398"
 
   def create
-    @twilio.messages.create(
-      from: TWILIO,
-      to: ME,
-      body: "#{params}"
-    )
+    puts params
   end
+
+  private
 
   def twilio
     @_twilio ||= Twilio::REST::Client.new
