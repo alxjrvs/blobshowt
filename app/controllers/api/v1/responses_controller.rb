@@ -1,9 +1,12 @@
 class ResponsesController < ApplicationController
 
+  TWILIO="+17818195082",
+  ME="+17814757398"
+
   def create
     @twilio.messages.create(
-      from: '+7818195082',
-      to: '+17814757398',
+      from: TWILIO,
+      to: ME,
       body: "#{params}"
     )
   end
