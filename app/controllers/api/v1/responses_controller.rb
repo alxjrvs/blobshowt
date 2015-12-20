@@ -9,16 +9,18 @@ module Api
       def create
         if admin?
           send_blast
-        elsif !registered?
-          if subscription_keyphrase_match? 
-            RegisteredNumber.create(number: from)
-            send_welcome_message
-          end
         else
-          if help_keyphrase_match?
-            send_help_message
-          else if remove_keyphrase_match?
-            send_removal_message
+          if !registered?
+            if subscription_keyphrase_match? 
+              RegisteredNumber.create(number: from)
+              send_welcome_message
+            end
+          else
+            if help_keyphrase_match?
+              send_help_message
+            elsif remove_keyphrase_match?
+              send_removal_message
+            end
           end
         end
 
@@ -39,7 +41,6 @@ module Api
             body: body
           )
         end
-
       end
 
       def send_welcome_message
@@ -93,9 +94,6 @@ module Api
       def twilio
         @_twilio ||= Twilio::REST::Client.new
       end
-
     end
   end
 end
-
-
