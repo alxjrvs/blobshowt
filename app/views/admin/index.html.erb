@@ -1,0 +1,10 @@
+<% @broadcasts.each do |broadcast| %>
+  <div class="broadcast">
+    <h1 class="time">
+      <%= broadcast.create_at %>
+    </h1>
+    <p class="body">
+      <%= broadcast.body %>
+    </p>
+  </div>
+<% end %>
