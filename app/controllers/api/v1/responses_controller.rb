@@ -15,12 +15,6 @@ module Api
               RegisteredNumber.create(number: from)
               send_welcome_message
             end
-          else
-            if help_keyphrase_match?
-              send_help_message
-            elsif remove_keyphrase_match?
-              send_removal_message
-            end
           end
         end
 
