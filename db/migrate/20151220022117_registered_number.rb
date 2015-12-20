@@ -1,6 +1,6 @@
 class RegisteredNumber < ActiveRecord::Migration
   def change
-    create_table :registered_number do |t|
+    create_table :registered_numbers do |t|
       t.string :number
 
       t.timestamps

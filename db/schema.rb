@@ -16,7 +16,7 @@ ActiveRecord::Schema.define(version: 20151220022117) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "registered_number", force: :cascade do |t|
+  create_table "registered_numbers", force: :cascade do |t|
     t.string   "number"
     t.datetime "created_at"
     t.datetime "updated_at"
