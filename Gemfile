@@ -10,6 +10,10 @@ gem 'coffee-rails', '~> 4.1.0'
 gem 'jquery-rails'
 gem 'twilio-ruby'
 
+group :production do
+  gem 'rails_12factor'
+end
+
 group :development, :test do
   gem 'dot_env'
   gem 'pry-rails'
