@@ -8,6 +8,7 @@ module Api
 
       def create
         puts params
+        return nil
       end
 
       private
