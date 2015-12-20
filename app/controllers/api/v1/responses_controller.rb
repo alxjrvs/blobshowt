@@ -1,25 +1,94 @@
 module Api
   module V1
     class ResponsesController < ApplicationController
-      TWILIO="+17818195082",
+      TWILIO="+17818195082"
       ME="+17814757398"
 
       skip_before_action :verify_authenticity_token, only: [:create]
-      # {"ToCountry"=>"US", "ToState"=>"MA", "SmsMessageSid"=>"SMd3f28b8e377d77a71ffa20dfc6d01220", "NumMedia"=>"0", "ToCity"=>"ARLINGTON", "FromZip"=>"02155", "SmsSid"=>"SMd3f28b8e377d77a71ffa20dfc6d01220", "FromState"=>"MA", "SmsStatus"=>"received", "FromCity"=>"MEDFORD", "Body"=>"Test", "FromCountry"=>"US", "To"=>"+17818195082", "MessagingServiceSid"=>"MGb6b09958c646fc66e1c84ef17e4dac40", "ToZip"=>"02476", "NumSegments"=>"1", "MessageSid"=>"SMd3f28b8e377d77a71ffa20dfc6d01220", "AccountSid"=>"AC084eb5b8cf8f3644021c5b5e7058b34b", "From"=>"+17814757398", "ApiVersion"=>"2010-04-01"}
 
       def create
-        if params["Body"].downcase == "praise the weatherlords"
-          twilio.messages.create(
-            from: TWILIO,
-            to: params["From"],
-            body: 'PRAISE THEM.'
-          )
+        if admin?
+          send_blast
+        elsif !registered?
+          if subscription_keyphrase_match? 
+            RegisteredNumber.create(number: from)
+            send_welcome_message
+          end
+        else
+          if help_keyphrase_match?
+            send_help_message
+          else if remove_keyphrase_match?
+            send_removal_message
+          end
         end
-        
+
         render nothing: true
       end
 
       private
+
+      def admin?
+        from == ME
+      end
+
+      def send_blast
+        RegisteredNumber.all.each do |num|
+          twilio.messages.create(
+            from: TWILIO,
+            to: num,
+            body: body
+          )
+        end
+
+      end
+
+      def send_welcome_message
+        twilio.messages.create(
+          from: TWILIO,
+          to: from,
+          body: 'PRAISE THEM. YOU ARE IN THE FOLD.'
+        )
+      end
+
+      def send_help_message
+        twilio.messages.create(
+          from: TWILIO,
+          to: from,
+          body: 'TO STOP RECEIVING MESSAGES FROM THE WEATHER LORDS, REPLY WITH STOP'
+        )
+      end
+
+      def send_removal_message
+        twilio.messages.create(
+          from: TWILIO,
+          to: from,
+          body: 'YOU HAVE BEEN REMOVED.'
+        )
+      end
+
+      def body
+        params["Body"]
+      end
+
+      def from
+        params["From"]
+      end
+
+      def remove_keyphrase_match?
+        body == "STOP"
+      end
+
+      def help_keyphrase_match?
+        body == "HELP"
+      end
+
+      def subscription_keyphrase_match?
+        body == "PRAISE THE WEATHERLORDS"
+      end
+
+      def registered?
+        RegisteredNumber.where(number: from).any?
+      end
 
       def twilio
         @_twilio ||= Twilio::REST::Client.new
